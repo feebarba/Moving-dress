@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="Fitas flexíveis: arte generativa em p5.js." />
+    <title>Fitas Flexíveis — estudo de vento</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=end-width-2" />
+    <script defer src="vendor/p5.min.js"></script>
+    <script defer src="sketch.js?v=end-width-2"></script>
+    <script defer src="dev-reload.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <div id="canvas-wrap" aria-label="Animação de fitas flexíveis movidas pelo vento"></div>
+
+      <aside class="panel" aria-label="Controles do experimento">
+        <div class="panel-top">
+          <button id="toggle-panel" class="toggle-panel" type="button" aria-label="Minimizar painel" aria-expanded="true" aria-controls="panel-body">−</button>
+        </div>
+
+        <div id="panel-body" class="panel-body">
+          <label class="control" for="wind">
+            <span class="control-heading"><span>Intensidade do vento</span><output id="wind-value">58%</output></span>
+            <input id="wind" type="range" min="0" max="100" value="58" />
+          </label>
+          <label class="control" for="speed">
+            <span class="control-heading"><span>Velocidade do vento</span><output id="speed-value">100%</output></span>
+            <input id="speed" type="range" min="0" max="300" step="1" value="100" />
+          </label>
+          <label class="control" for="softness">
+            <span class="control-heading"><span>Flexibilidade</span><output id="softness-value">68%</output></span>
+            <input id="softness" type="range" min="0" max="100" value="68" />
+          </label>
+          <label class="control" for="count">
+            <span class="control-heading"><span>Número de fitas</span><output id="count-value">18</output></span>
+            <input id="count" type="range" min="10" max="80" step="1" value="18" />
+          </label>
+          <div class="direction-controls" role="group" aria-label="Direção das fitas">
+            <label for="start-side"><span>Start</span>
+              <select id="start-side">
+                <option value="top" selected>Top</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+                <option value="bottom">Bottom</option>
+              </select>
+            </label>
+            <label for="end-side"><span>End</span>
+              <select id="end-side">
+                <option value="top">Top</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+                <option value="bottom" selected>Bottom</option>
+              </select>
+            </label>
+          </div>
+          <label class="control" for="top-width">
+            <span class="control-heading"><span>Largura do Start</span><output id="top-width-value">100%</output></span>
+            <input id="top-width" type="range" min="0" max="100" step="1" value="100" />
+          </label>
+          <label class="toggle-control" for="random-ends">
+            <span>Fins aleatórios</span>
+            <input id="random-ends" type="checkbox" role="switch" aria-controls="end-width-control" />
+          </label>
+          <label class="control" id="end-width-control" for="end-width" hidden>
+            <span class="control-heading"><span>Largura no End</span><output id="end-width-value">100%</output></span>
+            <input id="end-width" type="range" min="0" max="100" step="1" value="100" />
+          </label>
+          <label class="toggle-control" for="random-motion">
+            <span>Vento aleatório</span>
+            <input id="random-motion" type="checkbox" role="switch" checked />
+          </label>
+          <div class="color-control">
+            <label class="control-heading" for="background-color"><span>Cor do fundo</span><output id="background-value">#FFFFFF</output></label>
+            <input id="background-color" type="color" value="#ffffff" aria-label="Cor do fundo" />
+          </div>
+          <div class="text-control">
+            <label class="control-heading" for="ribbon-text"><span>Texto nas fitas</span><output id="text-count">26 palavras</output></label>
+            <textarea id="ribbon-text" rows="4" aria-describedby="text-feedback" spellcheck="false">o vento percorre cada fita e desloca pequenas lembranças entre o começo e o fim enquanto a superfície respira muda de direção e retorna ao movimento</textarea>
+            <p id="text-feedback" class="text-feedback" role="status">Mínimo de 20 palavras para aparecer nas fitas.</p>
+          </div>
+          <label class="control" for="text-speed">
+            <span class="control-heading"><span>Velocidade do texto</span><output id="text-speed-value">100%</output></span>
+            <input id="text-speed" type="range" min="0" max="300" step="1" value="100" />
+          </label>
+          <div class="color-control">
+            <label class="control-heading" for="text-color"><span>Cor do texto</span><output id="text-color-value">#000000</output></label>
+            <input id="text-color" type="color" value="#000000" aria-label="Cor do texto" />
+          </div>
+
+          <div class="ribbon-color-control">
+            <div class="control-heading">
+              <span>Cores das fitas</span>
+              <label class="color-count-label" for="color-count">Ativas
+                <select id="color-count" aria-label="Número de cores das fitas">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4" selected>4</option>
+                </select>
+              </label>
+            </div>
+            <div class="ribbon-color-row">
+              <div id="ribbon-colors" class="ribbon-colors" role="group" aria-label="Cores das fitas em ordem">
+                <input id="ribbon-color-1" type="color" value="#ffffff" aria-label="Primeira cor das fitas" />
+                <input id="ribbon-color-2" type="color" value="#862c0e" aria-label="Segunda cor das fitas" />
+                <input id="ribbon-color-3" type="color" value="#f83f77" aria-label="Terceira cor das fitas" />
+                <input id="ribbon-color-4" type="color" value="#e7c1ce" aria-label="Quarta cor das fitas" />
+              </div>
+              <label class="toggle-control random-colors-control" for="random-colors">
+                <span>Aleatório</span>
+                <input id="random-colors" type="checkbox" role="switch" />
+              </label>
+            </div>
+          </div>
+          <div class="panel-footer">
+            <button id="pause" class="text-button" type="button" aria-label="Pausar animação">Pausar <span>Ⅱ</span></button>
+          </div>
+          <button id="save" class="save-button" type="button">Salvar imagem <span>↗</span></button>
+          <p id="error" class="error" hidden>Não foi possível carregar p5.js. Conecte-se à internet e recarregue a página.</p>
+        </div>
+      </aside>
+    </main>
+  </body>
+</html>
